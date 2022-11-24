@@ -1,6 +1,0 @@
-{
-  "code-runner.executorMap": {
-    "typescript": "node_modules/.bin/ts-node"
-  },
-  "CurrentProjectSetting": null
-}
