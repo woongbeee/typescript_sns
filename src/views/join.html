@@ -1,0 +1,159 @@
+﻿{% extends 'index.html' %}
+
+{% block content %}
+<h2 id="join-title">Welcome to be our member!</h2>
+<form id="join-form" action="./auth/join" method="post">
+    <div>
+        <p id="emailNotice" style="display:none"></p>
+        <input class="inputgroup" id="email" name="email" type="email" required autofocus />
+        <label for="email">Email</label>
+    </div>
+    <div>
+        <p id="nickNotice" style="display:none"></p>
+        <input class="inputgroup" id="nickname" name="nickname" />
+        <label for="nickname">nickname</label>
+    </div>
+    <div>
+        <input class="inputgroup" id="password" name="password" type="password" required />
+        <label for="password">Password</label>
+    </div>
+    <div>
+        <p id="passwordNotice" style="display:none;margin:auto;font-size:0.9rem;">비밀번호가 일치하지 않습니다.</p>
+        <input class="inputgroup" id="checkPassword" name="checkPassword" type="password" required />
+        <label for="checkPassword">Confirm password</label>
+    </div>
+    <button id="join" type="submit" style="display:none">Sign in</button>
+    <a id="back" href="/">Back to <br/>login page</a>
+</form>
+{% endblock %}
+
+{% block script %}
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script>
+    window.onload = () => {
+    
+
+        let emailRes;
+        let nickRes;
+        let passwordRes;
+        const join = document.getElementById('join');
+
+        //이메일 중복 검사
+        const email = document.getElementById('email');
+        const emailNotice = document.getElementById('emailNotice');
+        email.addEventListener('change', (e) => {
+            if (e.target.value.trim() === '') {
+                emailNotice.style.display = "none";
+            } else {
+                try {
+                    axios.get('user/email', {
+                        params: {
+                            email: e.target.value.trim()
+                        }
+                    })
+                        .then((res) => {
+                            let result = res.data.data.getUser;
+                            if (result === null && e.target.value !=='') {
+                                emailNotice.innerHTML = "사용 가능한 이메일 입니다.";
+                                emailNotice.style.color = "black"
+                                emailNotice.style.fontSize = "0.9rem"
+                                emailNotice.style.display = "block";
+                                emailNotice.style.margin = "auto";
+                                emailNotice.style.marginTop = "5px";
+                                emailRes = true;
+                                if (emailRes && nickRes && passwordRes) {
+                                    submit.style.display = 'block';
+                                }
+                            } else {
+                                emailNotice.innerHTML = "이미 가입한 이메일 입니다.";
+                                emailNotice.style.color = "red";
+                                emailNotice.style.fontSize = "0.9rem";
+                                emailNotice.style.display = "block";
+                                emailNotice.style.margin = "auto";
+                                emailNotice.style.marginTop = "5px";
+                                emailRes = false;
+                            }
+                        })
+                } catch (err) {
+                    consoel.log(err);
+                }
+            }
+        });
+
+        //닉네임 중복 검사
+        const nickname = document.getElementById('nickname');
+        const nickNotice = document.getElementById('nickNotice');
+        nickname.addEventListener("keyup", (e) => {
+            if (e.target.value === '') {
+                nickNotice.style.display = "none";
+            } else {
+                try {
+                    axios.get('user/nickname', {
+                        params: {
+                            nickname: e.target.value.trim()
+                        }
+                    })
+                        .then((res) => {
+                            let result = res.data.data.getUser;
+                            if (result === null) {
+                                nickNotice.innerHTML = "사용 가능한 별명입니다.";
+                                nickNotice.style.color = "black"
+                                nickNotice.style.fontSize = "0.9rem"
+                                nickNotice.style.display = "block";
+                                nickNotice.style.margin = "auto";
+                                nickNotice.style.marginTop = "5px";
+                                nickRes = true;
+                                if (emailRes && nickRes && passwordRes) {
+                                    join.style.display = 'block';
+                                }
+                            } else {
+                                nickNotice.innerHTML = "이미 사용중인 별명입니다.";
+                                nickNotice.style.color = "red";
+                                nickNotice.style.fontSize = "0.9rem";
+                                nickNotice.style.display = "block";
+                                nickNotice.style.margin = "auto";
+                                nickNotice.style.marginTop = "5px";
+                            }
+                        })
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+        })
+
+        //비밀번호 일치 검사
+        const password = document.getElementById('password');
+        const checkPassword = document.getElementById('checkPassword');       
+        const passwordNotice = document.getElementById('passwordNotice');
+
+        password.addEventListener('change', (e) => {
+            if (e.target.value === checkPassword.value) {
+                passwordNotice.style.display = "none";
+                join.style.display = "block";
+                passwordRes = true;
+                if (emailRes && nickRes && passwordRes) {
+                    join.style.display = 'block';
+                }
+            } else {
+                passwordNotice.style.display = "block";
+                passwordRes = false;
+                
+            }
+        })
+        checkPassword.addEventListener('change', (e) => {
+            if (e.target.value === password.value) {
+                passwordNotice.style.display = "none";
+                passwordRes = true;
+                if (emailRes && nickRes && passwordRes) {
+                    join.style.display = 'block';
+                }
+            } else {
+                passwordNotice.style.display = "block";
+                passwordRes = false;
+
+            }
+        })
+    };
+</script>
+  {% endblock %}

@@ -1,0 +1,15 @@
+﻿{% extends 'index.html' %}
+
+{% block main %}
+<h2>{{subject}}</h2>
+<ul>
+	{% for a in user.post %}
+	<li>
+		<img src="{{a.nickname}}" />{{a.text}}
+	</li>
+</ul>
+    {% endfor %}
+{% endblock %}
+
+{% block script %}
+{% endblock %}

@@ -1,0 +1,100 @@
+﻿{% extends 'index.html' %}
+
+{% block main %}
+<form id="user-page" method="post" action="/user/update">
+
+    <h2>{{user.nickname}}님의 회원 정보 페이지입니다. </h2><br />
+    <img id="profilePic" src={{user.profile}} /><br />
+    <input name="profilePic" value={{user.profile}} style="display:none" />
+    <label for="img" id="img-label">사진 변경</label>
+    <input id="img" type="file" accept="image/*" name="img" style="display:none" />
+    <br /><br />
+
+    <div id="user-page-in">
+        <label name="id">아이디&nbsp;&nbsp;&nbsp;</label><p name="id">{{user.email}}</p><br /><br />
+        <label name="nickname">닉네임&nbsp;&nbsp;&nbsp;</label><input id="nickname" name="nickname" value={{user.nickname}} readonly />
+        <p id="change-nickname">닉네임 변경</p><br /><br />
+
+        <div id="new-nickname" style="display:none">
+            <input id="newNickname" name="newNickname" placeholder="새 닉네임" />
+            <a id="cancle-nickname">취소</a>
+            <p id="nickname-notice" style="display:none"></p>
+        </div>
+
+        <label>비밀번호&nbsp;&nbsp;&nbsp;</label><a id="change-password" href="/password?keyword=change">비밀번호 변경</a><br />
+    </div>
+    <button type="submit">적용</button><br />
+    <a href="/">취소</a><br /><br /><br />
+    <a class="header-items" href="/auth/logout" style="font-size:0.9rem;color:lightgray;">로그아웃</a>&nbsp;&nbsp;
+    <a href="/password?keyword=delete" style="font-size: 0.9rem; color: lightgray;">회원 탈퇴</a>
+    {% if message %}
+    <h2 style="color:tomato">{{message}}</h2>
+    {% endif%}
+</form>
+
+
+{% endblock %}
+
+{% block script %}
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+
+    //프로필 사진 미리보기
+    if (document.getElementById('img')) {
+        document.getElementById('img').addEventListener('change', (e) => {
+            let formData = new FormData();
+            formData.append('img', e.target.files[0]);
+            axios.post('/post/profile', formData)
+                .then((res) => {
+                    const preview = document.getElementById('profilePic');
+                    preview.src = res.data;
+
+                    const input = document.createElement('input');
+                    input.setAttribute("name", "url");
+                    input.setAttribute("value", `${res.data}`);
+                    input.style.display = "none";
+                    preview.appendChild(input);
+                })
+              })
+    };
+
+    //닉네임 바꾸기 양식
+    const changeNickname = document.getElementById('change-nickname');
+    const newNicknameForm = document.getElementById('new-nickname');
+   
+    changeNickname.addEventListener('click', (e) => {
+        newNicknameForm.style.display = "block";
+        changeNickname.style.display = 'none';
+    });
+
+    document.getElementById('cancle-nickname').addEventListener('click', (e) => {
+        newNicknameForm.style.display = "none";
+        changeNickname.style.display = "inline";
+    });
+
+
+
+    //닉네임 중복검사
+    const targetNick = document.getElementById('newNickname');
+    targetNick.addEventListener("keyup", (e) => {
+        axios.get('user/nickname', {
+            params: {
+                nickname: e.target.value.trim()
+            }
+        })
+            .then((res) => {
+                const notice = document.getElementById('nickname-notice');
+                if (res.data.data.getUser === null) {
+                    notice.innerHTML = "사용 가능한 닉네임 입니다.";
+                    notice.style.color = "blue";
+                   notice.style.display = "block";
+                } else {
+                    notice.innerHTML = "누군가 사용중인 닉네임 입니다.";
+                    notice.style.color = "red";
+                    notice.style.display = "block";
+                }
+            })
+    })
+    
+</script>
+{% endblock %}

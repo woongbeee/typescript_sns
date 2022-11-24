@@ -1,0 +1,360 @@
+﻿{% extends 'index.html' %}
+
+{% block main %}
+
+<div class="timeline">
+    {% if user %}
+    <i class="fa fa-plus-circle fa-4x"></i>
+    <div class="upload">
+        <form id="upload-form" action="/post" method="post" anctype="multipart/form-data">
+            <div id="btns">
+                <label for="img" id="img-label">최대 5개의 파일 첨부 가능&nbsp;<i class="fa fa-picture-o fa-2x"></i></label>
+                <input id="img" type="file" accept="image/*" name="img" multiple />
+                <button id="upload" type="submit">게시</button>
+            </div>
+            <textarea id="text" name="text"></textarea>
+            <div id="img-preview" class="img-preview">
+            </div>
+
+        </form>
+    </div>
+
+  
+    <form id="modifyModal" action="/post/modify" method="post" anctype="multipart/form-data" style="display:none">
+    </form>
+
+
+    {% for post in posts %}
+    <div class="posts">
+        <div class="user-profile">
+            <img class="post-profile" src={{post.writer.profile}} />&nbsp;&nbsp;
+            <form action="/getfeed" method="get"><input type="hidden" value="{{post.writer._id}}" name="id" class="post-nickname" /><button type="submit">{{post.writer.nickname}}</button></form>
+            {% if user._id === post.writer._id %}
+            <div class="post-menu">
+                <i class="fa fa-ellipsis-v fa-2x" data-value="owner"></i>
+                <ul class="submenu" style="display:none" data-value={{post._id}}>
+                    <li data-action="post-modify">수정</li>
+                    <li data-action="post-delete">삭제</li>
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+
+
+        {% if post.pictures %}
+        <div class="slider">
+            {% if post.pictures[1] %}
+            <i class="fa fa-chevron-left fa-3x" data-action="left"></i>
+            <i class="fa fa-chevron-right fa-3x" data-action="right"></i>
+            {% endif %}
+
+            <img class="post-picture" src="{{post.pictures[0]}}" />
+
+            {% for picture in post.pictures %}
+            <input type="hidden" class="{{post._id}}" value="{{picture}}" />
+            {% endfor %}
+
+            {% endif %}
+        </div>
+
+        {% set like = post.likes %}
+        {% set a = like | join(",", "_id") %}
+
+        <div class="react">
+
+            {% if a.includes(user._id) %}
+            <i class="fa fa-heart fa-lg" data-id="{{post._id}}" value="unlike" style="color:tomato"></i>
+            &nbsp;<span>{{post.likes.length}}</span> &nbsp; &nbsp;
+            <i class="fa fa-comments fa-lg" data-id="{{post._id}}"></i>
+            &nbsp;<span>{{post.comments.length}}</span>
+
+            {% else %}
+            <i class="fa fa-heart fa-lg" data-id="{{post._id}}" value="like"></i>
+            &nbsp;<span>{{post.likes.length}}</span> &nbsp; &nbsp;
+            <i class="fa fa-comments fa-lg" data-id="{{post._id}}"></i>
+            &nbsp;<span>{{post.comments.length}}</span>
+            {% endif %}
+
+        </div>
+
+
+        <div class="content {{post._id}}">{{post.text}}</div>
+
+        {% if post.comments %}
+        {% for comment in post.comments %}
+        <ul class="comments" data-value={{comment._id}}>
+            <li>
+                <strong>{{comment.writer.nickname}}</strong>&nbsp; {{comment.comment}}&nbsp;&nbsp;&nbsp;
+                {% if comment.writer._id === user._id or user._id === post.writer._id%}
+                <i class="fa fa-trash-o" data-action="comment-delete"></i>
+                {% endif %}
+            </li>
+        </ul>
+        {% endfor %}
+        {% endif %}
+
+        <form class="comment-input" action="/post/comment" method="post">
+            <input type="hidden" name="postId" value={{post._id}} />
+            <input type="text" name="comment" />
+            <button type="submit"><i class="fa fa-paper-plane fa-2x" id="comment-send"></i></button>
+        </form>
+
+    </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}
+
+
+
+{% block script %}
+<script>
+    const error = new URL(location.href).searchParams.get('error');
+    if (error === 'nocontent') {
+        swal("", "게시할 내용이 없습니다.", "warning");
+    }
+        //글 올리기 
+        const addPost = document.querySelector(".fa-plus-circle");
+        const uploadForm = document.querySelector(".upload");
+        addPost.addEventListener("click", () => {
+            if (uploadForm.style.display === "none") {
+                uploadForm.style.display = "block";
+            } else {
+                uploadForm.style.display = "none";
+            }
+        })
+
+
+        //사진 업로드 미리보기 함수
+        function imgPreview(e, previewNode, max) {
+            const total = document.getElementsByClassName('remove').length;
+            if (total + e.target.files.length === 0) {
+                alert("파일이 선택되지 않았습니다.")
+            } else if (total + e.target.files.length > max) {
+                alert(`최대 ${max}개까지 선택 가능합니다.`)
+            } else {
+                const formData = new FormData();
+                const pics = Array.from(e.target.files);
+                pics.map(v => {
+                    formData.append(e.target.name, v);
+                })
+                axios.post('/post/img', formData)
+                    .then((res) => {
+                        let pics = res.data.map((v, idx) => {
+                            if (idx === 4) {
+                                return;
+                            } else {
+                                return `<div class="remove" style="background-image:url(${v})">
+                                <div><i class="fa fa-times fa-2x"></i></div>
+                                <input name='url' value=${v} type='hidden'>
+                                    </div>`
+                            }
+                        });
+                        pics = pics.join('');
+                        previewNode.innerHTML += pics;
+
+                        const remove = document.getElementsByClassName('remove');
+                        Array.prototype.forEach.call(remove, (v) => {
+                            v.addEventListener('click', (e) => {
+                                e.currentTarget.remove();
+                            })
+                        });
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                    });
+            }
+        };
+
+        //게시글 업로드 사진 미리보기
+        const preview = document.getElementById('img-preview');
+        document.getElementById('img').addEventListener('change', (e) => {
+            imgPreview(e, preview, 5)
+        });
+
+
+
+        //게시글 수정,삭제
+        const subMenu = document.getElementsByClassName('submenu')
+        Array.prototype.forEach.call(subMenu, (v) => {
+            v.addEventListener("click", (e) => {
+                let action = e.target.dataset.action;
+                if (action === "post-delete") {
+                    axios.post('/delete/post', {
+                        postId: e.currentTarget.dataset.value
+                    }).then(() => {
+                        alert('Post deleted');
+                        location.href = "/";
+                    })
+                        .catch((err) => {
+                            console.log(err.message);
+                        });
+                } else if (action === "post-modify") {
+                    const modifyModal = document.getElementById('modifyModal');
+                    axios.get('/getpost',
+                        {
+                            params: {
+                                id: e.currentTarget.dataset.value
+                            }
+                        })
+                        .then((result) => {
+                            let pics = result.data.pictures.map(v => {
+                                return `<div value=${v} class="remove" style="background-image:url(${v})">
+                                        <div><i class="fa fa-times fa-2x remove"></i></div>
+                                        <input name='url' value=${v} type='hidden'>
+                                    </div>`
+                            })
+                            pics = pics.join('');
+
+                            modifyModal.style.display = "block";
+                            modifyModal.innerHTML = `
+                        <input type="hidden" name="id" value=${result.data._id}  />
+                        <h3>게시글 수정</h3>
+                        <div id="modifyPics" class="img-preview">
+                            ${pics}
+                        </div><br/>
+                        <label for="modifyfile">사진 선택</label>
+                        <input type="file" id="modifyfile"  accept="image/*" name="img" style="display:none" multiple/><br /><br />
+                        <textarea spellcheck="false" autofocus="true" name="text">${result.data.text}</textarea><br />       
+                        <div class="btns"><button tyep="submit">수정</button>
+                        <a class="modifycancle">취소</a></div>
+                        `;
+                            //게시글 수정 사진 미리보기
+                            const modifyPics = document.getElementById('modifyPics');
+                            document.getElementById('modifyfile').addEventListener('change', (e) => {
+                                imgPreview(e, modifyPics, 5);
+                            });
+
+
+                            const modifycancle = document.getElementsByClassName('modifycancle');
+                            Array.prototype.forEach.call(modifycancle, (v) => {
+                                v.addEventListener('click', () => {
+                                    modifyModal.style.display = "none";
+                                    modifyModal.innerHTML = ``
+                                })
+                            });
+                        })
+                        .catch((err) => {
+                            console.log("Post has not been modified", err)
+                        })
+
+                }
+            })
+        });
+
+        //댓글 삭제
+        const comment = document.getElementsByClassName('comments');
+        Array.prototype.forEach.call(comment, (v) => {
+            v.addEventListener('click', (e) => {
+                const action = e.target.dataset.action;
+                if (action === "comment-delete") {
+                    axios.post('/delete/comment', {
+                        commentId: e.currentTarget.dataset.value
+                    })
+                        .then(() => {
+                            alert('Comment deleted');
+                            location.href = "/";
+                        })
+                        .catch((err) => {
+                            console.log(err.message);
+                        });
+                } 
+            })
+        })
+
+
+        //포스트 팝업 메뉴
+        const postModify = document.getElementsByClassName('fa-ellipsis-v');
+        Array.prototype.forEach.call(postModify, (v) => {
+            v.addEventListener('click', () => {
+                const menu = v.nextSibling.nextSibling;
+                if (menu.style.display === 'none') {
+                    menu.style.display = 'block';
+                } else {
+                    menu.style.display = 'none';
+                }
+            })
+        });
+
+
+        //사진 슬라이드
+        const slider = document.getElementsByClassName('slider');
+    Array.prototype.forEach.call(slider, (v) => {
+        const left = document.getElementsByClassName('fa-chevron-left');
+        Array.prototype.forEach.call(left, (left) => {
+            left.style.display = 'none';
+        })
+            let num = 7;
+            v.addEventListener('click', (e) => {
+                const img = e.currentTarget.childNodes[5];
+                //오른쪽 화살표를 눌렀을 때
+                if (e.target.dataset.action === "right") {
+                    num += 2;
+                    if (e.currentTarget.childNodes[num + 2] == undefined) {
+                        img.src = e.currentTarget.childNodes[num].value;
+                        e.currentTarget.childNodes[1].style.display = 'block';
+                        e.target.style.display = 'none';
+                        
+                   } else if (e.currentTarget.childNodes[num].value) {
+                       img.src = e.currentTarget.childNodes[num].value;
+                       e.currentTarget.childNodes[1].style.display = 'block';
+                    }
+
+                 //왼쪽 화살표를 눌렀을 때
+                } else if (e.target.dataset.action === "left") {
+                    num -= 2;
+                    if (num === 7) {
+                        img.src = e.currentTarget.childNodes[num].value;
+                        e.target.style.display = 'none';
+                        e.currentTarget.childNodes[3].style.display = 'block'
+                    } else if (e.currentTarget.childNodes[num-2]) {
+                        img.src = e.currentTarget.childNodes[num].value;
+                        e.target.style.display = 'block'
+                        e.currentTarget.childNodes[3].style.display = 'block'
+                    } 
+                }
+            })
+        })
+
+
+       //좋아요 누르기
+        const like = document.getElementsByClassName('fa-heart');
+
+        Array.prototype.forEach.call(like, (v) => {
+            v.addEventListener('click', (e) => {
+                let like = e.target.getAttribute('value');
+                if (like === "like") {
+                    axios.post('/post/like', {
+                         postId: e.target.dataset.id,
+                     })
+                        .then((result) => {
+                            let like = Number(e.target.nextSibling.nextSibling.innerHTML);
+                             e.target.nextSibling.nextSibling.innerHTML = (like + 1);
+                            e.target.style.color = "tomato";
+                            e.target.setAttribute('value', 'unlike');
+                         })
+                         .catch((err) => {
+                             console.log(err);
+                         })
+                } else if (like === "unlike") {
+                    axios.post('/post/unlike', {
+                        postId: e.target.dataset.id,
+                    })
+                        .then((result) => {
+                            let like = Number(e.target.nextSibling.nextSibling.innerHTML);
+                            e.target.nextSibling.nextSibling.innerHTML = (like - 1);
+                            e.target.style.color = "lightgrey";
+                            e.target.setAttribute('value', 'like');
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        })
+                 } 
+            })
+
+        });
+        
+   
+    
+</script>
+{% endblock %}

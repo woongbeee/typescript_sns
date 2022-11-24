@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store,must-revalidate">
+    <meta http-equiv="Expires" content="0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <title>{{title}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/index.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    {% if user %}
+    <header id="userinfo" data-value="{{user._id}}">
+        <img id="profile-pic" src={{user.profile}} data-action="profile" />
+        <a class="header-items" href="/">{{user.nickname}}</a>
+        <form class="header-items" action='/getfeed' method="get"><input type="hidden" name="id" value="{{user._id}}" /><button type="submit">내 피드 &nbsp;&nbsp;{{user.post.length}}</button></form>
+        <form class="header-items" action="/user/getfollowing" method="get"><input type="hidden" name="id" value="{{user._id}}" /><button type="submit">팔로잉&nbsp;&nbsp;{{user.following.length}}</button></form>
+        <form class="header-items" action="/user/getfollower" method="get"><input type="hidden" name="id" value="{{user._id}}" /><button type="submit">팔로워&nbsp;&nbsp;{{user.follower.length}}</button></form>
+        <a class="header-items" href="/profile">내 정보</a>
+        <a class="header-items" href="/auth/logout">로그아웃</a>
+    </header>
+
+    {% block main %}
+    {% endblock %}
+
+    {% else %}
+    {% block content %}
+    <h2 id="login-title">Hello,stranger!</h2>
+    <form id="login-form" action="/auth/login" method="post">
+        <div>
+            <input class="inputgroup" id="email" type="email" name="email" required autofocus />
+            <label for="email">Email</label>
+        </div>
+        <div>
+            <input class="inputgroup" id="password" type="password" name="password" required />
+            <label for="password">Password</label>
+        </div>
+        <button id="login" type="submit">Login</button>
+        <a id="join" href="/join">Sign in</a>
+    </form>
+    <footer>Made by WOONGBEE</footer>
+    {% endblock %}
+    {% endif %}
+
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+
+        const error = new URL(location.href).searchParams.get('error');
+        if (error === 'not a member') {
+            swal("", "존재하지 않는 회원입니다.", "warning");
+        } else if (error === 'wrong password') {
+            swal("", "비밀번호를 다시 확인해주세요.", "error");
+            }
+
+  })
+    </script>
+
+    {% block script %}
+    {% endblock %}
+</body>
+</html>

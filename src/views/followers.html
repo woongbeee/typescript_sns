@@ -1,0 +1,16 @@
+{% extends 'index.html' %}
+
+{% block main %}
+
+{% if followings %}
+    {% for following in followings %}
+    <div id="followers">
+        <img src="{{following.profile}}" />
+        <form action="/getfeed" method="get"><input type="hidden" name="id" value="{{following._id}}" />
+        <button type="submit">{{following.nickname}}</button>
+        </form>
+    </div>
+    {% endfor %}
+{% endif %}
+
+{% endblock %}

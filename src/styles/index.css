@@ -1,0 +1,943 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+
+html, body {
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    overflow-x:hidden;
+    margin:0;
+}
+html::-webkit-scrollbar{
+    width:10px;
+}
+html::-webkit-scrollbar-track{
+    background-color:lightgray;
+}
+
+html::-webkit-scrollbar-thumb {
+    background-color:tomato;
+    border-radius: 100px;
+}
+
+ul{
+    list-style:none;
+}
+
+/*로그인, 회원가입 페이지*/
+
+#login-title, #join-title {
+    text-align: center;
+    font-size: 2.7rem;
+    color: tomato;
+    margin-bottom: 3px;
+    margin-top: 7%;
+}
+
+#login-form, #join-form {
+    display: absoulte;
+    margin: auto;
+    border: 0.7px solid tomato;
+    width:30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 1.2rem;
+    padding: 40px;
+}
+
+    #login-form > div, #join-form > div {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+
+    label {
+        margin: auto;
+        margin-bottom: 10px;
+        margin-top: 15px;
+        color: #dedcdc;
+    }
+
+    .inputgroup {
+        border: none;
+        border-bottom: 4px dotted tomato;
+        font-family: 'Roboto', sans-serif;
+        width: 50%;
+        height: 10%;
+        margin: auto;
+        font-size: 1.2rem;
+    }
+
+    input:focus {
+        outline: none;
+    }
+
+        input:focus + label {
+            color: tomato;
+        }
+
+    a {
+        text-decoration: none;
+    }
+
+    #join, #login, #back {
+        font-family: 'Roboto', sans-serif;
+        font-size: 1.3rem;
+        text-align: center;
+        width: 50%;
+        margin: auto;
+        margin-top: 15px;
+        color: tomato;
+        cursor: pointer;
+        display: block;
+        position: relative;
+        border: 2px solid tomato;
+        transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1) 0s;
+    }
+
+        #join:hover, #login:hover, #back:hover {
+            color: #ffffff !important;
+            background-color: transparent;
+            text-shadow: none;
+        }
+
+            #join:hover:before, #login:hover:before, #back:hover:before {
+                bottom: 0%;
+                top: auto;
+                height: 100%;
+            }
+
+        #join:before, #login:before, #back:before {
+            display: block;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            height: 0px;
+            width: 100%;
+            z-index: -1;
+            content: '';
+            color: #ffffff !important;
+            background: tomato;
+            transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1) 0s;
+        }
+
+        #join:focus, #login:focus, #back:focus {
+            outline: none;
+            background-color: tomato;
+            color: #ffffff;
+        }
+
+    #back {
+        font-size: 1.1rem;
+    }
+
+    footer {
+        text-align: center;
+        color: lightsalmon;
+    }
+
+
+@media screen and (max-width:500px) {
+    html, body {
+        font-family: 'Roboto', sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 95%;
+    }
+
+    #login-title, #join-title {
+        font-size: 1.7rem;
+        color: tomato;
+    }
+
+    #login-form, #join-form {
+        width: 85%;
+        height: 70%;
+        padding: 15px;
+        font-size: 1rem;
+    }
+
+    #join, #login, #back {
+        font-size: 1rem;
+        width: 30%;
+    }
+}
+
+/* 페이지 상단 회원정보 navbar*/
+
+    #userinfo {
+        margin: 0;
+        padding: 10px;
+        padding-top:7px;
+        width: 35%;
+        height: min-content;
+        background-color: tomato;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items:center;
+    }
+
+
+        #userinfo > #profile-pic {
+            border: 1px solid lightgrey;
+            border-radius: 20px;
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        #userinfo > .header-items {
+            margin: 0;
+            margin-top: 12px;
+            margin-right: 10px;
+            color:white;
+            font-size:0.9rem;
+        }
+        #userinfo>.header-items>button{
+            border:none;
+            background-color:transparent;
+            font-size:1rem;
+            color:white;
+        }
+        #userinfo>.header-items:hover{
+            cursor:pointer;
+            font-weight:600;
+        }
+         #userinfo>.header-items>button:hover{
+             cursor:pointer;
+            font-weight:600;
+         }
+         
+         #userinfo > .header-items:hover {
+                cursor: pointer;
+            }
+
+@media screen and (max-width:600px){
+
+    #userinfo {
+        margin: 0;
+        padding: 10px;
+        width: 100%;
+        justify-content: flex-end;
+    }
+    #userinfo>form{
+        display:none;
+    }
+    .header-items{
+        font-size:0.7rem;
+    }
+}
+@media screen and (max-width:1000px) {
+
+    #userinfo {
+        margin: 0;
+        padding: 10px;
+        width: 50%;
+        justify-content: flex-end;
+    }
+        #userinfo > form {
+            display: none;
+        }
+
+    .header-items {
+        font-size: 0.7rem;
+    }
+}
+
+
+
+/* main.html */
+
+textarea {
+    resize: none;
+}
+
+    .timeline {
+        width: 35%;
+        padding: 10px;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .fa {
+        color: gainsboro;
+    }
+
+        .fa:hover {
+            cursor: pointer;
+            color: tomato;
+        }
+
+    .upload {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin-bottom:20px;
+        display: none;
+    }
+
+    #upload-form {
+        position: static;
+        width: 100%;
+        height: max-content;
+        text-align: center;
+        padding: 10px;
+        margin: auto;
+    }
+
+        #upload-form > #text {
+            width: 100%;
+            margin: auto;
+            resize: none;
+            height: 150px;
+            font-size: 1rem;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        #upload-form > #btns {
+            margin-left:250px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            width: max-content;
+        }
+
+            #upload-form > #btns > #img {
+                display: none;
+            }
+
+            #upload-form > #btns > #upload {
+                margin: 7px;
+                font-size: 1.1rem;
+                font-weight: 500;
+                font-family: 'Roboto', sans-serif;
+                color: tomato;
+                border-radius: 10px;
+                border: solid 0.5px tomato;
+                padding: 5px;
+                background-color: white;
+            }
+
+                #upload-form > #btns > #upload:hover {
+                    background-color: tomato;
+                    color: white;
+                }
+
+
+@media screen and (max-width:500px){
+    .timeline{
+        width:100%;
+    }
+    #upload-form{
+        width:100%;
+    }
+    #upload-form>text{
+        width:90%;
+    }
+    #upload-form>#btns{
+        margin-left:80px;
+    }
+    #upload-form>#btns>#img-label{
+        font-size:0.9rem;
+        font-weight:300;
+    }
+}
+
+.posts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width:100%;
+    height: fit-content;
+    margin-top:20px;
+ }
+
+.user-profile {
+    width: 100%;
+    margin: auto;
+    display:flex;
+    align-items:center;
+}
+
+    .user-profile > .post-profile {
+        display: inline-block;
+        float: left;
+        width: 35px;
+        height: 35px;
+        margin-top: 5px;
+        border-radius: 10px;
+    }
+    .user-profile>form>button{
+        width:250px;
+        border:none;
+        background-color:transparent;
+        font-size:1rem;
+        font-weight:600;
+        text-align:left;
+    }
+    .user-profile>form>button{
+        cursor:pointer;
+    }
+
+    .user-profile > .post-menu {
+        position: relative;
+        margin-left:210px;
+    }
+
+       .user-profile > .post-menu > .submenu {
+           position: absolute;
+           z-index: 10;
+           top: 20px;
+           right: -10px;
+           border: 0.5px solid lightgrey;
+           border-radius: 10px;
+           background-color: white;
+           padding: 10px;
+           width: max-content;
+       }
+
+           .user-profile > .post-menu > .submenu > li {
+               margin: 12px;
+           }
+
+              .user-profile > .post-menu > .submenu > li:hover {
+                 cursor: pointer;
+                 color: tomato;
+              }
+
+@media screen and (max-width:600px){
+    .user-profile{
+        font-size:0.9rem;
+    }
+    .user-profile > .post-menu{
+        margin-left:50px;
+    }
+}
+
+/*포스트 사진 슬라이더*/
+.slider {
+    display: flex;
+    align-content: center;
+    flex-flow: row nowrap;
+    width: 100%;
+    height:fit-content;
+    max-height:400px;
+    margin: 0;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    position: relative;
+}
+
+    .slider > img {
+        position: relative;
+        object-fit: contain;
+        width: 100%;
+        margin: 0;
+    }
+
+    .slider > .fa {
+        position: absolute;
+        z-index: 10;
+        top: 45%;
+        color: rgba(0,0,0,0.6);
+    }
+
+       .slider > .fa:hover {
+           color: rgba(0,0,0,0.8);
+       }
+
+        .slider > .fa-chevron-right {
+            left: 93%;
+        }
+
+.react {
+    margin: auto;
+    margin-top:0;
+    width:100%;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items:center;
+}
+
+
+.content {
+    width:100%;
+    margin: auto;
+    margin-bottom:10px;
+    margin-top: 10px;
+    padding-bottom:20px;
+    border-bottom:1px solid lightgrey;
+}
+
+
+
+    /*댓글*/
+
+    .comments {
+        width: 100%;
+        margin: auto;
+        margin-bottom: 10px;
+        padding: 0;
+    }
+
+    .comment-input {
+        width: 100%;
+        margin: auto;
+        display: flex;
+        flex-direction: row;
+    }
+
+        .comment-input > input {
+            width: inherit;
+            font-size: 1rem;
+        }
+
+        .comment-input > button {
+            border: none;
+            background: none;
+        }
+
+
+    /*포스트 모달*/
+    #modifyModal {
+        font-family: 'Roboto', sans-serif;
+        z-index: 12;
+        width: 30%;
+        height: 88%;
+        border-radius: 20px;
+        border: 0.5px solid black;
+        background-color: rgb(255,255,255,1);
+        position: fixed;
+        top: 10px;
+        padding: 20px;
+        padding-top: 0;
+    }
+
+    .img-preview {
+        width: 100%;
+        height: 300px;
+        max-height: 50%;
+        overflow: auto;
+        overflow-y: hidden;
+        display: inline;
+        float: left;
+        white-space: nowrap;
+    }
+
+        .img-preview::-webkit-scrollbar {
+            height: 7px;
+        }
+
+        .img-preview::-webkit-scrollbar-track {
+            background-color: lightgray;
+            border-radius: 100px;
+        }
+
+        .img-preview::-webkit-scrollbar-thumb {
+            background-color: tomato;
+            border-radius: 100px;
+        }
+
+
+        .img-preview > div {
+            display: inline-block;
+            width: 50%;
+            height: 90%;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 5px;
+            text-align: center;
+        }
+
+            .img-preview > div > div > i {
+                visibility: hidden;
+                color: tomato;
+            }
+
+            .img-preview > div:hover {
+                cursor: pointer;
+                visibility: visible;
+            }
+
+                .img-preview > div:hover i {
+                    visibility: visible;
+                    cursor: pointer;
+                }
+
+            .img-preview > div > div {
+                visibility: hidden;
+                z-index: 12;
+                color: white;
+                padding: 10px;
+                background-color: rgba(255,255,255,0.5);
+                position: relative;
+                width: 100%;
+                height: 100%;
+                padding: 0;
+                text-align: center;
+            }
+
+    #modifyModal > label {
+        font-family: 'Roboto', sans-serif;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+        #modifyModal > label:hover {
+            color: tomato;
+            cursor: pointer;
+        }
+
+    #modifyModal > textarea {
+        width: 100%;
+        height: 25%;
+        margin: 0;
+        border: 0.5px solid lightgrey;
+        overflow: auto;
+    }
+
+        #modifyModal > textarea:focus {
+            outline: none;
+        }
+
+        #modifyModal > textarea::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        #modifyModal > textarea::-webkit-scrollbar-track {
+            background-color: lightgray;
+            border-radius: 100px;
+        }
+
+        #modifyModal > textarea::-webkit-scrollbar-thumb {
+            background-color: darkgrey;
+            border-radius: 100px;
+        }
+
+    #modifyModal > .btns {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+        #modifyModal > .btns > button {
+            padding: 10px;
+            width: 100px;
+            border-radius: 5px;
+            border: 1px tomato solid;
+            color: tomato;
+            background-color: white;
+            font-size: 1rem;
+            margin: 10px;
+        }
+
+            #modifyModal > .btns > button:hover, #modifyModal > .btns > a:hover {
+                cursor: pointer;
+                background-color: tomato;
+                color: white;
+            }
+
+        #modifyModal > .btns > a {
+            padding: 10px;
+            border: 1px solid tomato;
+            border-radius: 5px;
+            color: tomato;
+            background-color: white;
+        }
+
+
+
+    /*사용자 정보 페이지*/
+    #user-page {
+        border: 1px solid tomato;
+        padding: 40px;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+        #user-page > img {
+            border: 1px solid lightgrey;
+            border-radius: 50px;
+            width: 100px;
+            height: 100px;
+        }
+
+    #user-page-in {
+        text-align: left;
+        margin: auto;
+        width: 80%;
+        font-size: 1.1rem;
+    }
+
+        #user-page-in > p {
+            display: inline;
+        }
+
+        #user-page-in > #nickname {
+            border: none;
+            width: 40%;
+            font-size: 1rem;
+        }
+
+    #change-nickname, #change-password {
+        border: 1px solid tomato;
+        border-radius: 10px;
+        padding: 5px;
+        font-size: 0.9rem;
+        color: black;
+    }
+
+        #change-nickname:hover {
+            cursor: pointer;
+            background-color: tomato;
+            color: white;
+        }
+
+        #change-password:hover {
+            cursor: pointer;
+            background-color: tomato;
+            color: white;
+        }
+
+    #new-nickname > input {
+        width: 60%;
+        height: 30px;
+        margin-bottom: 7px;
+    }
+
+    #new-nickname > a {
+        border: 0.3px solid lightgrey;
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 0.9rem;
+        margin: 3px;
+        color: tomato;
+    }
+
+        #new-nickname > a:hover {
+            cursor: pointer;
+            background-color: tomato;
+            border: tomato;
+            color: white;
+        }
+
+    #user-page > button {
+        width: 60%;
+        background-color: tomato;
+        border: none;
+        color: white;
+        font-size: 1rem;
+        height: 40px;
+        margin: 10px;
+        margin-top: 40px;
+    }
+
+        #user-page > button:hover {
+            cursor: pointer;
+        }
+
+    .password-modify {
+        border: 1px solid tomato;
+        padding: 40px;
+        text-align: center;
+    }
+
+        .password-modify > input {
+            width: 80%;
+            height: 25px;
+            margin: 5px;
+        }
+
+        .password-modify > button {
+            width: 60%;
+            background-color: tomato;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            height: 40px;
+            margin: 10px;
+            margin-top: 40px;
+        }
+
+            .password-modify > button:hover {
+                cursor: pointer;
+            }
+
+    @media screen and (max-width:500px) {
+        #user-page {
+            padding: 10px;
+        }
+
+            #user-page > h2 {
+                font-size: 1rem;
+            }
+    }
+
+
+    /*피드 모아보기*/
+    #feeduser {
+        font-family: 'Roboto', sans-serif;
+        width: 360px;
+        height: auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        #feeduser > div > img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50px;
+        }
+
+        #feeduser > div {
+            text-align: center;
+        }
+
+    #feedFollow > form {
+        padding-top: 20px;
+    }
+
+        #feedFollow > form > button {
+            border: none;
+            background-color: transparent;
+        }
+
+            #feedFollow > form > button:hover {
+                cursor: pointer;
+                font-weight: 600;
+            }
+
+    #follow > button {
+        border: 0.5px solid tomato;
+        padding: 10px;
+        background-color: transparent;
+        border-radius: 10px;
+    }
+
+        #follow > button:hover {
+            cursor: pointer;
+            background-color: tomato;
+            color: white;
+        }
+
+    #myfeed {
+        width: 40%;
+        height: auto;
+        padding: 20px;
+        display: table-row;
+    }
+
+        #myfeed > img {
+            width: 30%;
+            height: auto;
+            border-radius: 20px;
+        }
+
+            #myfeed > img:hover {
+                cursor: pointer;
+            }
+
+#modal{
+    z-index:100;
+    position:absolute;
+    top:15%;
+    margin:auto;
+    border:0.5px solid lightgrey;
+    border-radius:30px;
+    width:fit-content;
+    height:auto;
+    background-color:white;
+    padding:20px;
+}
+
+#modal>#pics{
+    width:100%;
+    height:auto;
+    max-height:300px;
+    margin-bottom:30px;
+}
+#modal>#pics>img{
+    width:100%;
+    height:auto;
+    max-height:300px;
+    object-fit:contain;
+}
+
+#modal>#pics>i{
+    position:absolute;
+    top:25%;
+}
+#modal>#pics>.fa-chevron-right{
+    right:4%;
+}
+    #modal > textarea {
+        border: none;
+        font-family: 'Roboto', sans-serif;
+        padding: 10px;
+        width: 100%;
+        font-size: 0.9rem;
+        height: fit-content;
+        text-align: left;
+        border-bottom:0.5px solid lightgrey;
+    }
+    #modal>.comments{
+        font-size:0.9rem;
+        width:100%;
+        padding:10px;
+        margin-bottom:20px;
+    }
+    #modal>button{
+        border:0.5px solid tomato;
+        padding:10px;
+        border-radius:10px;
+        background-color:white;
+        color:tomato;
+  
+    }
+    #modal>button:hover{
+        cursor:pointer;
+        background-color:tomato;
+        color:white;
+    }
+
+
+
+
+    /*followers.html*/
+
+    #followers {
+        width: 40%;
+        height: auto;
+        margin: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        #followers > img {
+            width: 7%;
+            border: 0.5px solid lightgrey;
+            border-radius: 20px;
+            margin: 10px;
+        }
+
+        #followers > form {
+            display: inline-block;
+        }
+        #followers>form>button{
+            border:none;
+            background-color:transparent;
+            font-size:1rem;
+        }

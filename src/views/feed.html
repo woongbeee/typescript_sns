@@ -1,0 +1,176 @@
+﻿{% extends 'index.html' %}
+
+{% block main %}
+
+{% set owner = feed[0].writer %}
+{% set follower= feed[0].writer.follower | join(",", "_id") %}
+{% set following= feed[0].writer.following | join(",", "_id") %}
+
+<div id="feeduser">
+    <div>
+        <br />
+        <img src="{{owner.profile}}" /><br />
+        <h3>{{owner.nickname}}</h3><br />
+    </div>
+
+    <div>
+        <h4>{{owner.post.length}}</h4>
+        <h4>게시글</h4>
+    </div>
+
+    <div id="feedFollow">
+        <form action="user/getfollowing" method="get">
+            <input type="hidden" name="id" value="{{owner._id}}" />
+            <button type="submit">{{owner.following.length}}</button>
+            <h4>following</h4>
+        </form>
+    </div>
+
+    <div id="feedFollow">
+        <form action="user/getfollower" method="get">
+            <input type="hidden" name="id" value="{{owner._id}}" />
+            <button type="submit">{{owner.follower.length}}</button>
+            <h4>follower</h4>
+        </form>
+    </div>
+
+</div>
+
+
+    {% if follower.includes(user._id) and following.includes(user._id) and owner._id !== user._id %}
+<form id="follow" action="/user/unfollow" method="post" value="{{user._id}}">
+    <input type="hidden" name="id" value="{{user._id}}" />
+    <h4>맞팔중입니다.</h4>
+    <button type="submit">언팔로우하기</button>
+</form>
+
+
+
+    {% elif not follower.includes(user._id) and not following.includes(user._id) and owner._id !== user._id %}
+<form id="follow" action="/user/follow" method="post">
+    <input type="hidden" name="id" value="{{owner._id}}" />
+    <button type="submit">팔로우하기</button>
+</form>
+
+    {% elif following.includes(user._id) and not follower.includes(user._id) and owner._id !== user._id %}
+<form id="follow" action="/user/follow" method="post">
+    <input type="hidden" name="id" value="{{owner._id}}" />
+    <h4>나를 팔로우중 입니다. </h4>
+    <button type="submit">팔로우하기</button>
+</form>
+
+
+    {% elif follower.includes(user._id) and not following.includes(user._id) and owner._id !== user._id %}
+<form id="follow" action="/user/unfollow" method="post">
+    <input type="hidden" name="id" value="{{owner._id}}" />
+    <h4>팔로우 중입니다.</h4>
+    <button type="submit">언팔로우하기</button>
+</form>
+
+
+    {% endif %}
+
+
+
+<div id="myfeed">
+    {% for picture in feed %}
+    <img src="{{picture.pictures[0]}}" data-id="{{picture._id}}" class="feed" />
+    {% endfor %}
+</div>
+
+<div id="modal" style="display:none">
+</div>
+
+
+{% endblock %}
+
+
+{% block script %}
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    const feed = document.getElementsByClassName('feed');
+    Array.prototype.forEach.call(feed, (v) => {
+        v.addEventListener('click', (e) => {
+            axios.get('/getpost',
+                {
+                    params: {
+                        id: e.target.dataset.id
+                    }
+                })
+                .then((result) => {
+                    const modal = document.getElementById('modal');
+                    let pics = result.data.pictures;
+                    let num = 0;
+                    let comments = result.data.comments.map(v => {
+                        return `<strong>${v.writer.nickname}</strong>&nbsp; ${v.comment}&nbsp;&nbsp;&nbsp;<br />`
+                    })
+                    comments = comments.join('');
+
+                    modal.style.display = "block";
+                    modal.innerHTML = `
+                        <div id="pics">
+                          <i class="fa fa-chevron-left fa-3x" data-action="left"></i>
+                          <i class="fa fa-chevron-right fa-3x" data-action="right"></i>
+                           <img src= ${pics[num]} id="img" />
+                        </div><br/>
+
+                        <div id="unlike" class="react">
+                           <i class="fa fa-heart fa-lg" data-id=${result.data._id} value="like"></i>
+                          &nbsp;<span>${result.data.likes.length}</span> &nbsp; &nbsp;
+                          <i class="fa fa-comments fa-lg" data-id=${result.data._id}></i>
+                          &nbsp;<span>${result.data.comments.length}</span>
+                        </div>
+
+                        <textarea name="text" readonly>${result.data.text}</textarea><br />
+                        <div class="comments">${comments}</div>
+                        <button id="close">닫기</button>
+                        `;
+
+                    //사진 슬라이드
+                    const img = document.getElementById('img');
+                    const left = document.getElementsByClassName('fa-chevron-left');
+                    const right = document.getElementsByClassName('fa-chevron-right');
+
+                    if (pics.length === 0) {
+                        left[0].style.display = 'none';
+                        right[0].style.display = 'none';
+                    } else{
+                        left[0].style.display = 'none';
+                    }
+
+                    left[0].addEventListener('click', (e) => {
+                        num -= 1;
+                        if (num > 0) {
+                            img.src = pics[num];
+                            right[0].style.display = 'block';
+                        } else if (num === 0) {
+                            img.src = pics[num];
+                            e.target.style.display = 'none';
+                            right[0].style.display = 'block';
+                        } else if (num < 0) {
+                            num = 0;
+                        }
+                    });
+
+                    right[0].addEventListener('click', (e) => {
+                        num += 1; 
+                        if (num < pics.length-1) {
+                            img.src = pics[num];
+                            left[0].style.display ='block';
+                        } else  {
+                            img.src = pics[num];
+                            e.target.style.display ='none';
+                        }
+                    });
+
+                    //모달 창 닫기
+                    document.getElementById("close").addEventListener("click", () => {
+                        modal.style.display = 'none';
+                    });
+
+                })
+        })
+    })
+
+</script>
+{% endblock %}
