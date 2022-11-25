@@ -1,13 +1,8 @@
 ### SNS webpage 
 #### Typescript, Nodejs, GraphQL, Apollo Server, MongoDB, Nunjucks
-       1. You can download the codes to your local repo
-        git clone ...
-        
-       2. To start server, type < npm start > on command line.
-        npm start
-        
-       3. port number 5000 is set,
-        The address might be < http://localhost:5000/ >
+
+### You can visit the webpage through below link
+### https://woongsns.herokuapp.com/
 
 ***
 #### #log-in page
